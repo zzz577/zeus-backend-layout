@@ -6,6 +6,7 @@ import (
 
 	"zeus-backend-layout/internal/conf"
 
+	kzerolog "github.com/go-kratos/kratos/contrib/log/zerolog/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -13,6 +14,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/rs/zerolog"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -49,7 +51,10 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
+
+	zerolog.TimeFieldFormat = "2006-01-02 15:04:05.000"
+	zlogger := zerolog.New(os.Stdout)
+	logger := log.With(kzerolog.NewLogger(&zlogger),
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
@@ -58,12 +63,19 @@ func main() {
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
+	log.SetLogger(logger)
+
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
 		),
 	)
-	defer c.Close()
+	defer func(c config.Config) {
+		err := c.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(c)
 
 	if err := c.Load(); err != nil {
 		panic(err)
