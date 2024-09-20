@@ -31,16 +31,28 @@ type GreeterRepo interface {
 // GreeterUsecase is a Greeter usecase.
 type GreeterUsecase struct {
 	repo GreeterRepo
-	log  *log.Helper
+	tm   Transaction
 }
 
 // NewGreeterUsecase new a Greeter usecase.
-func NewGreeterUsecase(repo GreeterRepo, logger log.Logger) *GreeterUsecase {
-	return &GreeterUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewGreeterUsecase(repo GreeterRepo, tm Transaction) *GreeterUsecase {
+	return &GreeterUsecase{repo: repo, tm: tm}
 }
 
 // CreateGreeter creates a Greeter, and returns the new Greeter.
 func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *Greeter) (*Greeter, error) {
-	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Hello)
-	return uc.repo.Save(ctx, g)
+	log.Infof("CreateGreeter: %v", g.Hello)
+	var save *Greeter
+	var err error
+	err = uc.tm.InTx(ctx, func(ctx context.Context) error {
+		save, err = uc.repo.Save(ctx, g)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		log.Error(err)
+	}
+	return save, err
 }
