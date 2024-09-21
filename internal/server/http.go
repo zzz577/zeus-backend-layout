@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	v1 "zeus-backend-layout/api/helloworld/v1"
 	"zeus-backend-layout/internal/conf"
 	"zeus-backend-layout/internal/service"
@@ -15,6 +16,7 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			validate.Validator(),
 		),
 	}
 	if c.Http.Network != "" {
