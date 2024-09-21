@@ -4,7 +4,6 @@ package enttest
 
 import (
 	"context"
-
 	"zeus-backend-layout/internal/data/ent/ent"
 	// required by schema hooks.
 	_ "zeus-backend-layout/internal/data/ent/ent/runtime"

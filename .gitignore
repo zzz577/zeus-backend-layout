@@ -37,4 +37,4 @@ bin/
 .idea/
 *.swp
 
-configs/config.yaml
+deploy/config.yaml

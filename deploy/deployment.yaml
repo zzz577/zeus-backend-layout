@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zeus-backend-layout
+  labels:
+    app: zeus-backend-layout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zeus-backend-layout
+  template:
+    metadata:
+      name: zeus-backend-layout
+      labels:
+        app: zeus-backend-layout
+    spec:
+      containers:
+        - name: zeus-backend-layout
+          image: zeus-backend-layout:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: grpc
+              containerPort: 9000
+              protocol: TCP
+      restartPolicy: Always
+      

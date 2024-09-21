@@ -3,7 +3,7 @@ module zeus-backend-layout
 go 1.22.1
 
 require (
-	entgo.io/ent v0.14.0
+	entgo.io/ent v0.13.1
 	github.com/go-kratos/kratos/contrib/config/kubernetes/v2 v2.0.0-20240918015945-e1f5dc42b1e5
 	github.com/go-kratos/kratos/contrib/log/zerolog/v2 v2.0.0-20240918015945-e1f5dc42b1e5
 	github.com/go-kratos/kratos/v2 v2.8.0
@@ -26,6 +26,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
+	github.com/go-kratos/kratos/contrib/registry/kubernetes/v2 v2.0.0-20240918015945-e1f5dc42b1e5 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect

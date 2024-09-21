@@ -4,6 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/go-kratos/kratos/contrib/config/kubernetes/v2"
+	kuberegistry "github.com/go-kratos/kratos/contrib/registry/kubernetes/v2"
+	k8sclient "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 	"os"
 	"path/filepath"
@@ -33,6 +37,19 @@ var (
 )
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+	restConfig, err := rest.InClusterConfig()
+	home := homedir.HomeDir()
+	if err != nil {
+		kubeConfig := filepath.Join(home, ".kube", "config")
+		restConfig, err = clientcmd.BuildConfigFromFlags("", kubeConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	clientSet, err := k8sclient.NewForConfig(restConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -43,12 +60,13 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.Registrar(kuberegistry.NewRegistry(clientSet)),
 	)
 }
 
 func main() {
 	flag.Parse()
-
+	// log
 	zerolog.TimeFieldFormat = "2006-01-02 15:04:05.000"
 	zlogger := zerolog.New(os.Stdout)
 	logger := log.With(kzerolog.NewLogger(&zlogger),
@@ -62,12 +80,13 @@ func main() {
 	)
 	log.SetLogger(logger)
 
+	// config
 	c := config.New(
 		config.WithSource(
 			kubernetes.NewSource(
 				kubernetes.Namespace(NameSpace),
 				kubernetes.LabelSelector(fmt.Sprintf("app=%s", Name)),
-				kubernetes.KubeConfig(filepath.Join(homedir.HomeDir(), ".kube", "config")),
+				// kubernetes.KubeConfig(filepath.Join(homedir.HomeDir(), ".kube", "config")),
 			),
 		),
 	)
@@ -77,24 +96,22 @@ func main() {
 			log.Fatal(err)
 		}
 	}(c)
-
 	if err := c.Load(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer cleanup()
 
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
