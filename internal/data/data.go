@@ -46,7 +46,7 @@ func NewData(c *conf.Data) (*Data, func(), error) {
 	cleanup := func() {
 		log.Info("closing the data resources")
 	}
-	client, err := ent.Open("mysql", "root:xxxxx@tcp(127.0.0.1:3306)/test?parseTime=True")
+	client, err := ent.Open(c.Database.Driver, c.Database.Source)
 	if err != nil {
 		log.Errorf("failed opening connection to sqlite: %v", err)
 		return nil, nil, err
