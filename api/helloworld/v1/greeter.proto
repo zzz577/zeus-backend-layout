@@ -3,6 +3,7 @@ syntax = "proto3";
 package helloworld.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "zeus-backend-layout/api/helloworld/v1;v1";
 option java_multiple_files = true;
@@ -11,6 +12,12 @@ option java_outer_classname = "HelloworldProtoV1";
 
 // The greeting service definition.
 service Greeter {
+  rpc Healthy(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/healthy"
+    };
+  }
+
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {
     option (google.api.http) = {
