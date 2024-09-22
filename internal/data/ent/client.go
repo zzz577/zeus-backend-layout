@@ -9,9 +9,9 @@ import (
 	"log"
 	"reflect"
 
-	"zeus-backend-layout/internal/data/ent/ent/migrate"
+	"zeus-backend-layout/internal/data/ent/migrate"
 
-	"zeus-backend-layout/internal/data/ent/ent/user"
+	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"

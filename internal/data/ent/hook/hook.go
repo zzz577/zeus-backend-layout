@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"zeus-backend-layout/internal/data/ent/ent"
+	"zeus-backend-layout/internal/data/ent"
 )
 
 // The UserFunc type is an adapter to allow the use of ordinary

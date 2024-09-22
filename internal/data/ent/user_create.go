@@ -5,7 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
-	"zeus-backend-layout/internal/data/ent/ent/user"
+	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

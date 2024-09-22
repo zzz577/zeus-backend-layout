@@ -4,11 +4,11 @@ package enttest
 
 import (
 	"context"
-	"zeus-backend-layout/internal/data/ent/ent"
+	"zeus-backend-layout/internal/data/ent"
 	// required by schema hooks.
-	_ "zeus-backend-layout/internal/data/ent/ent/runtime"
+	_ "zeus-backend-layout/internal/data/ent/runtime"
 
-	"zeus-backend-layout/internal/data/ent/ent/migrate"
+	"zeus-backend-layout/internal/data/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

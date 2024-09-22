@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"zeus-backend-layout/internal/data/ent/ent/predicate"
+	"zeus-backend-layout/internal/data/ent/predicate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

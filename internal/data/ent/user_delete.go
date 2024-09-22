@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"zeus-backend-layout/internal/data/ent/ent/predicate"
-	"zeus-backend-layout/internal/data/ent/ent/user"
+	"zeus-backend-layout/internal/data/ent/predicate"
+	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

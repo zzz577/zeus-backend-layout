@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
-	"zeus-backend-layout/internal/data/ent/ent/user"
+	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
