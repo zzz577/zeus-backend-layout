@@ -38,3 +38,4 @@ bin/
 *.swp
 
 deploy/config.yaml
+internal/data/ent/migrate/migrations/*
