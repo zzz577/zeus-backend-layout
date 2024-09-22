@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: zeus-backend-layout
-          image: docker.io/library/zeus-backend-layout:v1
+          image: docker.io/library/zeus-backend-layout:0.01
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -25,9 +25,6 @@ spec:
               protocol: TCP
             - name: grpc
               containerPort: 9000
-              protocol: TCP
-            - name: dlv
-              containerPort: 40000
               protocol: TCP
       restartPolicy: Always
       

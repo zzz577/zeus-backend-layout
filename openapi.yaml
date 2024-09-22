@@ -7,6 +7,15 @@ info:
     description: The greeting service definition.
     version: 0.0.1
 paths:
+    /healthy:
+        get:
+            tags:
+                - Greeter
+            operationId: Greeter_Healthy
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /helloworld/{name}:
         get:
             tags:

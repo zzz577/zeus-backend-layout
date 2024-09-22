@@ -3,7 +3,6 @@ FROM golang:1.22 AS builder
 COPY .. /src
 WORKDIR /src
 
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
 RUN GOPROXY=https://goproxy.cn make build
 
 FROM debian:stable-slim
@@ -18,6 +17,6 @@ COPY --from=builder /src/bin /app
 
 WORKDIR /app
 
-EXPOSE 8000 9000 40000
+EXPOSE 8000 9000
 
 CMD ["./zeus-backend-layout"]

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/contrib/config/kubernetes/v2"
 	kuberegistry "github.com/go-kratos/kratos/contrib/registry/kubernetes/v2"
+	"github.com/go-kratos/kratos/v2/registry"
 	k8sclient "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -32,8 +33,9 @@ var (
 	// Name is the name of the compiled software.
 	Name = "zeus-backend-layout"
 	// Version is the version of the compiled software.
-	Version string
-	id, _   = os.Hostname()
+	Version   string
+	id, _     = os.Hostname()
+	LocalMode string
 )
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
@@ -50,6 +52,10 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var r registry.Registrar
+	if LocalMode != "true" {
+		r = kuberegistry.NewRegistry(clientSet)
+	}
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -60,7 +66,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
-		kratos.Registrar(kuberegistry.NewRegistry(clientSet)),
+		kratos.Registrar(r),
 	)
 }
 
@@ -81,12 +87,16 @@ func main() {
 	log.SetLogger(logger)
 
 	// config
+	var kubeConfig string
+	if LocalMode == "true" {
+		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+	}
 	c := config.New(
 		config.WithSource(
 			kubernetes.NewSource(
 				kubernetes.Namespace(NameSpace),
 				kubernetes.LabelSelector(fmt.Sprintf("app=%s", Name)),
-				// kubernetes.KubeConfig(filepath.Join(homedir.HomeDir(), ".kube", "config")),
+				kubernetes.KubeConfig(kubeConfig),
 			),
 		),
 	)
