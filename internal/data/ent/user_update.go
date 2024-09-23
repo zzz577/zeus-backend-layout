@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 	"zeus-backend-layout/internal/data/ent/predicate"
 	"zeus-backend-layout/internal/data/ent/user"
 
@@ -27,6 +28,32 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (uu *UserUpdate) SetUpdateTime(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdateTime(t)
+	return uu
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (uu *UserUpdate) SetDeleteTime(t time.Time) *UserUpdate {
+	uu.mutation.SetDeleteTime(t)
+	return uu
+}
+
+// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeleteTime(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDeleteTime(*t)
+	}
+	return uu
+}
+
+// ClearDeleteTime clears the value of the "delete_time" field.
+func (uu *UserUpdate) ClearDeleteTime() *UserUpdate {
+	uu.mutation.ClearDeleteTime()
+	return uu
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -34,6 +61,9 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	if err := uu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -59,6 +89,18 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() error {
+	if _, ok := uu.mutation.UpdateTime(); !ok {
+		if user.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
+		v := user.UpdateDefaultUpdateTime()
+		uu.mutation.SetUpdateTime(v)
+	}
+	return nil
+}
+
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
@@ -67,6 +109,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uu.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.DeleteTime(); ok {
+		_spec.SetField(user.FieldDeleteTime, field.TypeTime, value)
+	}
+	if uu.mutation.DeleteTimeCleared() {
+		_spec.ClearField(user.FieldDeleteTime, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -86,6 +137,32 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (uuo *UserUpdateOne) SetUpdateTime(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdateTime(t)
+	return uuo
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (uuo *UserUpdateOne) SetDeleteTime(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetDeleteTime(t)
+	return uuo
+}
+
+// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeleteTime(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDeleteTime(*t)
+	}
+	return uuo
+}
+
+// ClearDeleteTime clears the value of the "delete_time" field.
+func (uuo *UserUpdateOne) ClearDeleteTime() *UserUpdateOne {
+	uuo.mutation.ClearDeleteTime()
+	return uuo
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -108,6 +185,9 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	if err := uuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -131,6 +211,18 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() error {
+	if _, ok := uuo.mutation.UpdateTime(); !ok {
+		if user.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
+		v := user.UpdateDefaultUpdateTime()
+		uuo.mutation.SetUpdateTime(v)
+	}
+	return nil
 }
 
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
@@ -158,6 +250,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uuo.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.DeleteTime(); ok {
+		_spec.SetField(user.FieldDeleteTime, field.TypeTime, value)
+	}
+	if uuo.mutation.DeleteTimeCleared() {
+		_spec.ClearField(user.FieldDeleteTime, field.TypeTime)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

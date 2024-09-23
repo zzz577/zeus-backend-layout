@@ -37,5 +37,6 @@ bin/
 .idea/
 *.swp
 
+.mirrord
 deploy/config.yaml
 internal/data/ent/migrate/migrations/*

@@ -7,7 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 	"zeus-backend-layout/internal/data/ent/predicate"
+	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -31,6 +33,9 @@ type UserMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	create_time   *time.Time
+	update_time   *time.Time
+	delete_time   *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*User, error)
@@ -135,6 +140,127 @@ func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetCreateTime sets the "create_time" field.
+func (m *UserMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *UserMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *UserMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *UserMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *UserMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *UserMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (m *UserMutation) SetDeleteTime(t time.Time) {
+	m.delete_time = &t
+}
+
+// DeleteTime returns the value of the "delete_time" field in the mutation.
+func (m *UserMutation) DeleteTime() (r time.Time, exists bool) {
+	v := m.delete_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleteTime returns the old "delete_time" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDeleteTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleteTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleteTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleteTime: %w", err)
+	}
+	return oldValue.DeleteTime, nil
+}
+
+// ClearDeleteTime clears the value of the "delete_time" field.
+func (m *UserMutation) ClearDeleteTime() {
+	m.delete_time = nil
+	m.clearedFields[user.FieldDeleteTime] = struct{}{}
+}
+
+// DeleteTimeCleared returns if the "delete_time" field was cleared in this mutation.
+func (m *UserMutation) DeleteTimeCleared() bool {
+	_, ok := m.clearedFields[user.FieldDeleteTime]
+	return ok
+}
+
+// ResetDeleteTime resets all changes to the "delete_time" field.
+func (m *UserMutation) ResetDeleteTime() {
+	m.delete_time = nil
+	delete(m.clearedFields, user.FieldDeleteTime)
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -169,7 +295,16 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 3)
+	if m.create_time != nil {
+		fields = append(fields, user.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, user.FieldUpdateTime)
+	}
+	if m.delete_time != nil {
+		fields = append(fields, user.FieldDeleteTime)
+	}
 	return fields
 }
 
@@ -177,6 +312,14 @@ func (m *UserMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldCreateTime:
+		return m.CreateTime()
+	case user.FieldUpdateTime:
+		return m.UpdateTime()
+	case user.FieldDeleteTime:
+		return m.DeleteTime()
+	}
 	return nil, false
 }
 
@@ -184,6 +327,14 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case user.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case user.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case user.FieldDeleteTime:
+		return m.OldDeleteTime(ctx)
+	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
 
@@ -192,6 +343,27 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case user.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case user.FieldDeleteTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleteTime(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -213,13 +385,19 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(user.FieldDeleteTime) {
+		fields = append(fields, user.FieldDeleteTime)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -232,12 +410,28 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
+	switch name {
+	case user.FieldDeleteTime:
+		m.ClearDeleteTime()
+		return nil
+	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
+	switch name {
+	case user.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case user.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case user.FieldDeleteTime:
+		m.ResetDeleteTime()
+		return nil
+	}
 	return fmt.Errorf("unknown User field %s", name)
 }
 

@@ -3,6 +3,7 @@
 package user
 
 import (
+	"time"
 	"zeus-backend-layout/internal/data/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -51,6 +52,151 @@ func IDLT(id int) predicate.User {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldID, id))
+}
+
+// CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
+func CreateTime(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreateTime, v))
+}
+
+// UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
+func UpdateTime(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdateTime, v))
+}
+
+// DeleteTime applies equality check predicate on the "delete_time" field. It's identical to DeleteTimeEQ.
+func DeleteTime(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDeleteTime, v))
+}
+
+// CreateTimeEQ applies the EQ predicate on the "create_time" field.
+func CreateTimeEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreateTime, v))
+}
+
+// CreateTimeNEQ applies the NEQ predicate on the "create_time" field.
+func CreateTimeNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCreateTime, v))
+}
+
+// CreateTimeIn applies the In predicate on the "create_time" field.
+func CreateTimeIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCreateTime, vs...))
+}
+
+// CreateTimeNotIn applies the NotIn predicate on the "create_time" field.
+func CreateTimeNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCreateTime, vs...))
+}
+
+// CreateTimeGT applies the GT predicate on the "create_time" field.
+func CreateTimeGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCreateTime, v))
+}
+
+// CreateTimeGTE applies the GTE predicate on the "create_time" field.
+func CreateTimeGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCreateTime, v))
+}
+
+// CreateTimeLT applies the LT predicate on the "create_time" field.
+func CreateTimeLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCreateTime, v))
+}
+
+// CreateTimeLTE applies the LTE predicate on the "create_time" field.
+func CreateTimeLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCreateTime, v))
+}
+
+// UpdateTimeEQ applies the EQ predicate on the "update_time" field.
+func UpdateTimeEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdateTime, v))
+}
+
+// UpdateTimeNEQ applies the NEQ predicate on the "update_time" field.
+func UpdateTimeNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldUpdateTime, v))
+}
+
+// UpdateTimeIn applies the In predicate on the "update_time" field.
+func UpdateTimeIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldUpdateTime, vs...))
+}
+
+// UpdateTimeNotIn applies the NotIn predicate on the "update_time" field.
+func UpdateTimeNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldUpdateTime, vs...))
+}
+
+// UpdateTimeGT applies the GT predicate on the "update_time" field.
+func UpdateTimeGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldUpdateTime, v))
+}
+
+// UpdateTimeGTE applies the GTE predicate on the "update_time" field.
+func UpdateTimeGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldUpdateTime, v))
+}
+
+// UpdateTimeLT applies the LT predicate on the "update_time" field.
+func UpdateTimeLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldUpdateTime, v))
+}
+
+// UpdateTimeLTE applies the LTE predicate on the "update_time" field.
+func UpdateTimeLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldUpdateTime, v))
+}
+
+// DeleteTimeEQ applies the EQ predicate on the "delete_time" field.
+func DeleteTimeEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDeleteTime, v))
+}
+
+// DeleteTimeNEQ applies the NEQ predicate on the "delete_time" field.
+func DeleteTimeNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldDeleteTime, v))
+}
+
+// DeleteTimeIn applies the In predicate on the "delete_time" field.
+func DeleteTimeIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldDeleteTime, vs...))
+}
+
+// DeleteTimeNotIn applies the NotIn predicate on the "delete_time" field.
+func DeleteTimeNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldDeleteTime, vs...))
+}
+
+// DeleteTimeGT applies the GT predicate on the "delete_time" field.
+func DeleteTimeGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldDeleteTime, v))
+}
+
+// DeleteTimeGTE applies the GTE predicate on the "delete_time" field.
+func DeleteTimeGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldDeleteTime, v))
+}
+
+// DeleteTimeLT applies the LT predicate on the "delete_time" field.
+func DeleteTimeLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldDeleteTime, v))
+}
+
+// DeleteTimeLTE applies the LTE predicate on the "delete_time" field.
+func DeleteTimeLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldDeleteTime, v))
+}
+
+// DeleteTimeIsNil applies the IsNil predicate on the "delete_time" field.
+func DeleteTimeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldDeleteTime))
+}
+
+// DeleteTimeNotNil applies the NotNil predicate on the "delete_time" field.
+func DeleteTimeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldDeleteTime))
 }
 
 // And groups predicates with the AND operator between them.

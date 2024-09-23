@@ -4,7 +4,9 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -18,6 +20,48 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
+// SetCreateTime sets the "create_time" field.
+func (uc *UserCreate) SetCreateTime(t time.Time) *UserCreate {
+	uc.mutation.SetCreateTime(t)
+	return uc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreateTime(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCreateTime(*t)
+	}
+	return uc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (uc *UserCreate) SetUpdateTime(t time.Time) *UserCreate {
+	uc.mutation.SetUpdateTime(t)
+	return uc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdateTime(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdateTime(*t)
+	}
+	return uc
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (uc *UserCreate) SetDeleteTime(t time.Time) *UserCreate {
+	uc.mutation.SetDeleteTime(t)
+	return uc
+}
+
+// SetNillableDeleteTime sets the "delete_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDeleteTime(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetDeleteTime(*t)
+	}
+	return uc
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -25,6 +69,9 @@ func (uc *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
+	if err := uc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, uc.sqlSave, uc.mutation, uc.hooks)
 }
 
@@ -50,8 +97,33 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uc *UserCreate) defaults() error {
+	if _, ok := uc.mutation.CreateTime(); !ok {
+		if user.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
+		v := user.DefaultCreateTime()
+		uc.mutation.SetCreateTime(v)
+	}
+	if _, ok := uc.mutation.UpdateTime(); !ok {
+		if user.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
+		v := user.DefaultUpdateTime()
+		uc.mutation.SetUpdateTime(v)
+	}
+	return nil
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "User.create_time"`)}
+	}
+	if _, ok := uc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "User.update_time"`)}
+	}
 	return nil
 }
 
@@ -78,6 +150,18 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node = &User{config: uc.config}
 		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
+	if value, ok := uc.mutation.CreateTime(); ok {
+		_spec.SetField(user.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := uc.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
+	if value, ok := uc.mutation.DeleteTime(); ok {
+		_spec.SetField(user.FieldDeleteTime, field.TypeTime, value)
+		_node.DeleteTime = value
+	}
 	return _node, _spec
 }
 
@@ -99,6 +183,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 	for i := range ucb.builders {
 		func(i int, root context.Context) {
 			builder := ucb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserMutation)
 				if !ok {

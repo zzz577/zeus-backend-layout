@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/go-kratos/kratos/contrib/config/kubernetes/v2"
@@ -10,6 +11,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
+	"k8s.io/utils/env"
 	"os"
 	"path/filepath"
 
@@ -33,28 +35,29 @@ var (
 	// Name is the name of the compiled software.
 	Name = "zeus-backend-layout"
 	// Version is the version of the compiled software.
-	Version   string
-	id, _     = os.Hostname()
-	LocalMode string
+	Version string
+	id, _   = os.Hostname()
 )
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
-	restConfig, err := rest.InClusterConfig()
-	home := homedir.HomeDir()
-	if err != nil {
-		kubeConfig := filepath.Join(home, ".kube", "config")
-		restConfig, err = clientcmd.BuildConfigFromFlags("", kubeConfig)
+	kubeConf, err := rest.InClusterConfig()
+	switch {
+	case errors.Is(err, rest.ErrNotInCluster):
+		kubeConf, err = clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))
 		if err != nil {
 			log.Fatal(err)
 		}
+	case err != nil:
+		log.Fatal(err)
 	}
-	clientSet, err := k8sclient.NewForConfig(restConfig)
+	clientSet, err := k8sclient.NewForConfig(kubeConf)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var r registry.Registrar
-	if LocalMode != "true" {
-		r = kuberegistry.NewRegistry(clientSet)
+
+	var reg registry.Registrar
+	if debug, _ := env.GetBool("DEBUG", false); !debug {
+		reg = kuberegistry.NewRegistry(clientSet)
 	}
 	return kratos.New(
 		kratos.ID(id),
@@ -66,7 +69,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
-		kratos.Registrar(r),
+		kratos.Registrar(reg),
 	)
 }
 
@@ -74,8 +77,8 @@ func main() {
 	flag.Parse()
 	// log
 	zerolog.TimeFieldFormat = "2006-01-02 15:04:05.000"
-	zlogger := zerolog.New(os.Stdout)
-	logger := log.With(kzerolog.NewLogger(&zlogger),
+	zl := zerolog.New(os.Stdout)
+	logger := log.With(kzerolog.NewLogger(&zl),
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
@@ -88,8 +91,12 @@ func main() {
 
 	// config
 	var kubeConfig string
-	if LocalMode == "true" {
+	_, err := rest.InClusterConfig()
+	switch {
+	case errors.Is(err, rest.ErrNotInCluster):
 		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+	case err != nil:
+		log.Fatal(err)
 	}
 	c := config.New(
 		config.WithSource(

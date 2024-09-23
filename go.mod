@@ -3,7 +3,8 @@ module zeus-backend-layout
 go 1.22.1
 
 require (
-	entgo.io/ent v0.13.1
+	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43
+	entgo.io/ent v0.14.0
 	github.com/go-kratos/kratos/contrib/config/kubernetes/v2 v2.0.0-20240918015945-e1f5dc42b1e5
 	github.com/go-kratos/kratos/contrib/log/zerolog/v2 v2.0.0-20240918015945-e1f5dc42b1e5
 	github.com/go-kratos/kratos/contrib/registry/kubernetes/v2 v2.0.0-20240918015945-e1f5dc42b1e5
@@ -16,10 +17,10 @@ require (
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.1
 	k8s.io/client-go v0.26.3
+	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d
 )
 
 require (
-	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
@@ -73,7 +74,6 @@ require (
 	k8s.io/apimachinery v0.26.3 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
-	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d // indirect
 	sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect

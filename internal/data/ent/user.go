@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 	"zeus-backend-layout/internal/data/ent/user"
 
 	"entgo.io/ent"
@@ -13,9 +14,15 @@ import (
 
 // User is the model entity for the User schema.
 type User struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
+	// DeleteTime holds the value of the "delete_time" field.
+	DeleteTime   time.Time `json:"delete_time,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -26,6 +33,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
+		case user.FieldCreateTime, user.FieldUpdateTime, user.FieldDeleteTime:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +56,24 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
+		case user.FieldCreateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			} else if value.Valid {
+				u.CreateTime = value.Time
+			}
+		case user.FieldUpdateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+			} else if value.Valid {
+				u.UpdateTime = value.Time
+			}
+		case user.FieldDeleteTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field delete_time", values[i])
+			} else if value.Valid {
+				u.DeleteTime = value.Time
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -82,7 +109,15 @@ func (u *User) Unwrap() *User {
 func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
-	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString("create_time=")
+	builder.WriteString(u.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("update_time=")
+	builder.WriteString(u.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("delete_time=")
+	builder.WriteString(u.DeleteTime.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
